@@ -1,0 +1,89 @@
+Configuring RAC to use SCAN
+
+The set-up for SCAN is implemented as follows:
+
+STEP 1 - Add a new DNS entry for SCAN (e.g. /etc/hosts).  This will create a single DNS domain name that resolves to all of the IP addresses in your RAC cluster (one for each node).  This will use a round-robin algorithm
+
+root> cat /etc/hosts
+
+myscan.mydomain.com IN A 122.22.22.22 IN A 122.22.22.23 IN A 122.22.22.24
+
+STEP 2 - Create a SCAN VIP for each IP address in  step 1.
+
+STEP 3 - Create a SCAN listener for each VIP that was created in step 2.
+
+STEP 4 - Change the tnsnames.ora file.  This entry will point SCAN to the single DNS hostname created in step 1.  Prior to the introduction of SCAN (11g r1 and earlier using TAF or intelligent load balancing ), the tnsnames.ora file contained a list of hostnames, one for each node in the cluster:
+
+SCANDB =
+(DESCRIPTION =
+  (ADDRESS = (PROTOCOL = TCP)(HOST = myscan1.mydomain.com)(PORT = 1522))    
+  (ADDRESS = (PROTOCOL = TCP)(HOST = myscan2.mydomain.com)(PORT = 1522))
+  (ADDRESS = (PROTOCOL = TCP)(HOST = myscan3.mydomain.com)(PORT = 1522))
+   (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = SCANDB)
+   )
+)
+
+STEP 5 - Set the remote_listener and local_listener parameters:  You want to set your remote_listener parameter to point to a tnsnames.ora entry for SCAN as defined in step 4.
+
+remote_listener=myscan.mydomain.com:1522
+The SCAN listener for RAC
+
+This single domain addressing is implemented via a "scan listener" and the status can be checked with the standard lsnrctl command, passing the SCAN listener name as an argument:
+
+oracle> lsnrctl service
+
+oracle> lsnrctl stat myscan_listener
+
+LSNRCTL for UNIX: Version 11.2.0.1.0  . . 
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=LISTENER_MYSCAN1)))
+
+STATUS of the LISTENER . . .
+
+
+Server control commands for SCAN
+
+According to Karen Reidford, there are several new server control (srvctl) commands for SCAN:
+
+New SRVCTL Command
+
+What it does
+
+srvctl config scan
+
+Shows the current SCAN configuration
+
+srvctl config scan_listener
+
+Shows the existence and port numbers for the SCAN listeners
+
+srvctl add scan -n cluster01-scan
+
+Adds new SCAN information for a cluster
+
+srvctl remove scan -f
+
+Removes SCAN information
+
+srvctl add scan_listener
+
+Adds a new SCAN listener for a cluster on the default port of 1521
+
+srvctl add scan_listener -p 65001 ## non default port number ##
+
+Adds a new SCAN listener on a different port
+
+srvctl remove scan_listener
+
+Removes the SCAN listener
+
+srvctl modify scan -n cluster_scan
+
+Modifies SCAN information (used when changing SCAN to DNS after initially using /etc/hosts)
+
+srvctl modify scan_listener -u
+
+Modifies the SCAN listener information to match the new SCAN VIP information from the modify scan command
+
