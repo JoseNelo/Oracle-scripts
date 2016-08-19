@@ -1,0 +1,28 @@
+we have listener_host1 running on host1, and listener_host2 running on host2.
+
+listener_host1 is considered local listener for orcl1 instance, while listener_host2 is considered remote listener for that same orcl1 instance (because the listener in not running on the same machine as the database instance).
+
+similarly, listener_host2 is considered local listener for orcl2 instance, and considered as remote listener for orcl1.
+
+to make this consideration a real configuration, we configure the 2 parameters local_listener and remote_listener for both instances as below:
+
+orcl1.local_listener=(address of listener_host1)
+orcl1.remote_listener=(addresses of both listener_host1 and listener_host2)
+
+orcl2.local_listener=(address of listener_host2)
+orcl2.remote_listener=(addresses of both listener_host1 and listener_host2)
+
+server-side load balancing.
+with such configuration, both listeners in the cluster knows about both instances, and about both 
+hosts (statistics about host load, and instance load). and can make decision about forwarding a client 
+connection request to the other node if it's less loaded
+
+client-side load balancing
+clients are generally configured with tnsnames with both VIP addresses of the 2 hosts (i.e. can connect to either listener). so 
+if a client attempts the connection to the database with the first IP (which is listener_host1), and suppose host1 is a bit loaded 
+that host2, in such case the listener_host1 knows there is another instance orcl2 running on host2 that's less loaded. in such case, 
+listener_host1 sends a redirect packet to the client asking him to transparently reconnect to listener_host2 to establish the database
+connection.
+
+without such configuration of remote listener, each listener knows only about the local instance, and have nothing to do but connecting
+the client to the instance running on the same host as the listene
