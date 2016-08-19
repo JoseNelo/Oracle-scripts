@@ -31,3 +31,43 @@ LISTENER_SCAN3Version                   TNSLSNR for Linux: Version 11.2.0.2.0 – 
 
 
 4. Can we have more than one local listener per node with scan?     Yes , more than one local listener (for example one local listener per database) is possible with scan. Still the connections can be made via Scan. This is because when PMON of each database registers with scan  it will inform scan about the local listener  information too. So that enables scan listener to hand off connection to appropriate local listener.
+
+
+
+
+When Using EZ connect
+
+Oracle now offers a method called EZ Connect for client connections. Using EZ connect allows to connect without having a tnsnames.ora entry.An example EZ Connect connection will like the  following.
+sqlplus system/oracle@node1-vip1:1521/orcl
+However here we specify only one node.(which indicate we are not able to meet some of the goals mentioned above a client connection has)
+
+When JDBC Thin connection strings are created:
+Having to specify several node names(vips) in JDBC connect string is also  another concern.
+What is the SCAN (Single Client Access Name) and how it addresses above  problems?
+
+First of all When you use SCAN Name to connect to a RAC database you would be specifying on one name.(in tnsnames or in EZ connect or in JDBC connect string).This is the unique name associated with each of the rac cluster.
+
+An example of  SCAN connection will look like
+
+in tnsnames.ora it will be just like the following irrespective of the number or nodes in the cluster.
+
+RACDB=
+(DESCRIPTION =    (ADDRESS = (PROTOCOL = TCP)(HOST = SCAN_NAME)(PORT = 1521))
+That is only one entry irrespecitive of number of nodes. Even if the nodes are added or removed this does not change as node specific entries are not there.
+An EZ connect will look like below when using SCAN Access.
+
+./sqlplus system/oracle@SCAN_NAME:1521/orcl
+(this is still capable of  provide all desired goals of connection attempt)
+
+A JDBC Thin connect string also need to contain only just SCAN_NAME instead of several node VIPS.
+
+Now what is this SCAN Name:
+From an Networking perspective, it is just a name defined in the DNS. However DNS is configured in such a way that this name would resolve to three different IPs.When ever there is a request  from Clients these IPs would be provided in round robin.
+
+From a Clusterware perspective, clusterware uses these three IPs to accept the client connections. ie client connections are no longer  directed to the node-vips (they still exists) when SCAN name is used. Instead they reach the SCAN IPs first. The three SCAN IPs can be considered as  another SET OF FLOATING VIPs. These three IPs can be bought online on any of the three nodes in a cluster(decided by Clusterware usually).
+
+How the SCAN Works:
+
+Clusterware brings SCAN IPs online on any of the three nodes in the cluster
+Clusterware starts three listeners (known as SCAN Listeners) also on these nodes.  (these are technically same as any other lister, but listens on scan ip)
+All instances in the  clsuter will have remote_listener parameter pointed to the scan_name:port     example for remote_listener        *.remote_listener=scan_name:1521
