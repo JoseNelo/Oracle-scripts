@@ -71,3 +71,23 @@ How the SCAN Works:
 Clusterware brings SCAN IPs online on any of the three nodes in the cluster
 Clusterware starts three listeners (known as SCAN Listeners) also on these nodes.  (these are technically same as any other lister, but listens on scan ip)
 All instances in the  clsuter will have remote_listener parameter pointed to the scan_name:port     example for remote_listener        *.remote_listener=scan_name:1521
+
+
+Verify if Easy Connect Naming is configured[edit]
+
+To verify that the easy connect naming method is configured:
+Start Oracle Net Manager.
+In the navigator pane, expand Local > Profile.
+From the list in the right pane, select Naming.
+Click the Methods tab.
+Check that EZCONNECT listed in the Selected Methods list.
+Enable Easy Connect Naming[edit]
+
+To enable Easy Connect Naming from Net Manager:
+From the Available Methods list, select EZCONNECT, and then click the right-arrow button.
+From the Selected Methods list, select EZCONNECT, and then use the Promote button to move the selection to the top of the list.
+Choose File > Save Network Configuration.
+The sqlnet.ora file will be updated with the NAMES.DIRECTORY_PATH parameter (listing ezconnect first):
+NAMES.DIRECTORY_PATH=(ezconnect, tnsnames)
+This can also be done by updating the sqlnet.ora file manually.
+Category: Network services
