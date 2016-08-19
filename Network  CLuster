@@ -96,3 +96,16 @@ Monitor RAC Listener at OS level:
 0 S grid      6511     1  0  80   0 - 42965 ...  /u01/app/121/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
 0 S grid      9375     1  0  80   0 - 42932 ...  /u01/app/121/grid/bin/tnslsnr ASMNET1LSNR_ASM -no_crs_notify -inherit
 0 S grid      9500     1  0  80   0 - 43036 ...  /u01/app/121/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit
+
+
+ejemplos
+$ $GRID_HOME/bin/srvctl config scan
+SCAN name: pay-scan.us.oracle.com, Network: 1/10.4.0.0/255.255.255.0/eth1
+SCAN VIP name: scan1, IP: /10.4.0.201/120.0.0.201
+SCAN VIP name: scan2, IP: /10.4.0.202/120.0.0.202
+SCAN VIP name: scan3, IP: /10.4.0.203/120.0.0.203
+
+$ $GRID_HOME/bin/srvctl config scan_listener
+SCAN Listener LISTENER_SCAN1 exists. Port: TCP:1521
+SCAN Listener LISTENER_SCAN2 exists. Port: TCP:1521
+SCAN Listener LISTENER_SCAN3 exists. Port: TCP:1521
