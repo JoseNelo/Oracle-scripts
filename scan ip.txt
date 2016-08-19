@@ -1,0 +1,33 @@
+
+
+http://orainvicta.com/?p=245
+
+
+[grid@ racnode1:H1121]/g
+
+rid/64bit/crs112/bin> ./srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is running on node racnode2
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is running on node racnode3
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is running on node racnode1
+[grid@ racnode1:H1121]/grid/64bit/crs112/bin>
+This output shows on which node each of the scan listener listens.
+Now check for the services known to each of them on respective nodes.
+
+
+
+[grid@ racnode1:H1121]/grid/64bit/crs112/bin> ./lsnrctl status Listener_scan3
+LSNRCTL for Linux: Version 11.2.0.2.0 – Production on 01-JUL-2011 16:21:56
+Copyright (c) 1991, 2010, Oracle.  All rights reserved.
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=LISTENER_SCAN3)))STATUS of the LISTENER
+————————Alias
+LISTENER_SCAN3Version                   TNSLSNR for Linux: Version 11.2.0.2.0 – ProductionStart Date                29-JUN-2011 18:19:20Uptime                    1 days 22 hr. 2 min. 35 secTrace Level               offSecurity                  ON: Local OS AuthenticationSNMP                      OFFListener Parameter File   /grid/64bit/crs112/network/admin/listener.oraListener Log File         /grid/64bit/crs112/log/diag/tnslsnr/racnode1/listener_scan3/alert/log.xmlListening Endpoints Summary…
+(DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER_SCAN3)))
+(DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.10.19.56)(PORT=1521)))Services Summary
+…
+
+
+
+4. Can we have more than one local listener per node with scan?     Yes , more than one local listener (for example one local listener per database) is possible with scan. Still the connections can be made via Scan. This is because when PMON of each database registers with scan  it will inform scan about the local listener  information too. So that enables scan listener to hand off connection to appropriate local listener.
