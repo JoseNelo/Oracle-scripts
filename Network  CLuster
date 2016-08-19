@@ -109,3 +109,57 @@ $ $GRID_HOME/bin/srvctl config scan_listener
 SCAN Listener LISTENER_SCAN1 exists. Port: TCP:1521
 SCAN Listener LISTENER_SCAN2 exists. Port: TCP:1521
 SCAN Listener LISTENER_SCAN3 exists. Port: TCP:1521
+
+SRVCTL command for SCAN Listner:
+
+To add SCAN Listener
+
+    Command: srvctl add scan_listener [-l lsnr_name_prefix] [-s] [-p "[TCP:]port_list[/IPC:key][/NMP:pipe_name][/TCPS:s_port] [/SDP:port]"]
+    Example: srvctl add scan_listener -l scan1
+
+To Remove Scan Listener
+
+    Command: srvctl remove scan_listener [-f]
+    Example: srvctl remove scan_listener -f
+
+Note: Below command is using ordinal_number parameter so An ordinal number is that identifies which SCAN VIP you want to start. The range of values you can specify for this option is 1 to 3.
+
+To Start Scan Listener
+
+    Command: srvctl start scan_listener [-n node_name] [-i ordinal_number]
+    Example: srvctl start scan_listener -n instance1 -i 1
+
+To Stop Scan Listener
+
+    Command: srvctl stop scan_listener [-i ordinal_number] [-f]
+    Example: srvctl stop scan_listener -i 3
+
+To check the status of Scan Listner
+
+    Command: srvctl status scan_listener [-i ordinal_number]
+    Example: srvctl status scan_listener -i 1
+
+To Enable Scan Listener
+
+    Command: srvctl enable scan_listener [-i ordinal_number]
+    Example: srvctl enable scan_listener -i 2
+
+To Disable Scan Listener
+
+    Command: srvctl disable scan_listener [-i ordinal_number]
+    Example: srvctl disable scan_listener -i 1
+
+To Configure Scan Listener
+
+    Command: srvctl config scan_listener [-i ordinal_number]
+    Example: srvctl config scan_listener -i 3
+
+To Modify Scan Listener
+
+    Command: srvctl modify scan_listener {-p [TCP:]port[/IPC:key][/NMP:pipe_name] [/TCPS:s_port][/SDP:port] -u }
+    Example: srvctl modify scan_listener -u -p TCP:1521
+
+To relocate Scan Listener
+
+    Command: srvctl relocate scan_listener -i ordinal_number [-n node_name]
+    Example: srvctl relocate scan_listener -i 1 -n instance1
